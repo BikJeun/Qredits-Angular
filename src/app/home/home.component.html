@@ -1,0 +1,51 @@
+<app-navbar></app-navbar>
+<section class="content" id="content">
+    <h2>Welcome to Qredits</h2>
+
+
+    This page is broken down into 2 categories as shown in the navbar.
+    This page is entirely for ADMIN usage for each merchant. Vouchers handling and cashier account management can be
+    handled in using this web app
+
+
+
+
+    <p-button (click)="displayPosition=true" icon="pi pi-info-circle" label="User Guide" styleClass="p-button-warning">
+    </p-button>
+
+
+
+    <p-dialog header="How to use" [(visible)]="displayPosition" position="top-left" [modal]="true"
+        [style]="{width: '50vw'}" [baseZIndex]="10000" [draggable]="false" [resizable]="false" [closable]="false">
+        <p>
+            Guide on Nav Bar content.
+
+        </p>
+        <small style="color:darkgrey">If there are any issues with the website, please contact IT department.</small>
+        <p-divider align="center" type="dashed">
+            <b>Voucher Generation</b>
+        </p-divider>
+        <p>
+            Create all new vouchers here.
+            <br />
+            Made a mistake? NO WORRIES!
+            <br />
+            Edit your sale voucher details here as well.
+        </p>
+
+        <p-divider align="center" type="dashed">
+            <b>Merchant Management</b>
+        </p-divider>
+
+        <p>
+            Manage all Cashier details here
+
+        </p>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-check" (click)="displayPosition=false" label="Ok" styleClass="p-button-text">
+            </p-button>
+        </ng-template>
+    </p-dialog>
+
+
+</section>
