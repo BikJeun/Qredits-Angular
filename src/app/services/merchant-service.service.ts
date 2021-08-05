@@ -24,6 +24,7 @@ export class MerchantServiceService {
     )
   }
 
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage: string = "";
 

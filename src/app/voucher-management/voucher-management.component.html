@@ -1,1 +1,168 @@
-<p>voucher-management works!</p>
+<app-navbar></app-navbar>
+<div class="container">
+    <p-toast position="top-right"></p-toast>
+    <div class="headercontent">
+        <h2>All Vouchers</h2>
+        <p-button type="button" (onClick)="displayCreateDialog()">Add Voucher Code</p-button>
+    </div>
+    <div class="tablecontent">
+        <p-table [value]="promoCodes">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Voucher Id</th>
+                    <th>Value</th>
+                    <th>Quantity</th>
+                    <th>Expiry Date</th>
+                    <th>Availability</th>
+                    <th>QR Generated</th>
+                    <th>Price</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-code>
+                <tr>
+                    <td>{{code.id}}</td>
+                    <td>{{code.value}}</td>
+                    <td>{{code.qty}}</td>
+                    <td>{{returnDate(code.expiry)}}</td>
+                    <td>{{code.isAvailable}}</td>
+                    <td>{{code.isGenerated}}</td>
+                    <td>{{code.price}}</td>
+                    <td>
+                        <p-inputSwitch [(ngModel)]="code.isAvailable" (onChange)="updateCode(code)"></p-inputSwitch>
+                    </td>
+                    <td>
+                        <p-splitButton label="Edit" icon="pi pi-plus" styleClass=" p-button-warning" [model]="items"
+                            (click)="passVoucher(code)">
+                        </p-splitButton>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+
+    <p-dialog header="Create Voucher" [(visible)]="createDisplay" [contentStyle]="{'overflow': 'visible'}">
+        <div *ngIf="resultError == true" style="color:red;">
+            {{message}}
+        </div>
+        <form class="createPromoForm" #createPromoForm="ngForm" (ngSubmit)="createPromo(createPromoForm)">
+            <div class="p-field p-grid contentBoxes">
+                <label for="startDate" class="p-col-fixed" style="width: 100px;">Expiry Date: </label>
+                <div>
+                    <p-calendar [(ngModel)]="promoCodeToCreate.startDate" name="startDate" dateFormat="yy.mm.dd"
+                        [showTime]="true" [required]="true" inputId="startDate"></p-calendar>
+                </div>
+                <div *ngIf="startError == true" style="color:red;">
+                    Select a expiry date!
+                </div>
+            </div>
+
+
+            <div class="p-field p-grid contentBoxes">
+                <label for="discountrate" class="p-col-fixed" style="width: 100px;">Value of Voucher: </label>
+                <div>
+                    <input type="number" min="1" id="discountrate" [(ngModel)]="promoCodeToCreate.value"
+                        #discountrate="ngModel" name="discountrate" pInputText style="width: 450px" required="true">
+                </div>
+                <div *ngIf="discountrate.invalid && (discountrate.dirty || discountrate.touched || submitted)"
+                    class="errorText">
+                    <div class="error" *ngIf="discountrate.errors != null && discountrate.errors.required">
+                        Value is required.
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="p-field p-grid contentBoxes">
+                <label for="qty" class="p-col-fixed" style="width: 100px;">Quantity of Voucher: </label>
+                <div>
+                    <input type="number" min="1" id="qty" [(ngModel)]="promoCodeToCreate.qty" #discountrate="ngModel"
+                        name="qty" pInputText style="width: 450px" required="true">
+                </div>
+                <div *ngIf="qty.invalid && (qty.dirty || qty.touched || submitted)" class="errorText">
+                    <div class="error" *ngIf="qty.errors != null && qty.errors.required">
+                        Quantity is required.
+                    </div>
+
+                </div>
+            </div>
+            <div class="p-field p-grid contentBoxes">
+                <label for="price" class="p-col-fixed" style="width: 100px;">Price of Voucher: </label>
+                <div>
+                    <input pInputText type="number" min="0.00" max="10000.00" step="0.01" name="price" id="price"
+                        [(ngModel)]="promoCodeToCreate.price" #price="ngModel" required />
+                </div>
+                <div *ngIf="price.invalid && (price.dirty || price.touched || submitted)" class="errorText">
+                    <div class="error" *ngIf="price.errors != null && price.errors.required">
+                        Price is required.
+                    </div>
+
+                </div>
+            </div>
+
+            <br />
+            <div class="formbuttons">
+                <p-button class="button" (click)="clear()"> Clear </p-button>
+                <p-button class="button" type="submit"> Submit </p-button>
+            </div>
+        </form>
+    </p-dialog>
+
+    <p-dialog class="dialogs" *ngIf="showUpdate" header="Update Voucher Details" [(visible)]="showUpdate" [modal]="true"
+        [closable]="false">
+        <ng-template pTemplate="content">
+            <div class="p-field">
+                <label for="name">Expiry Date</label> &nbsp;
+                <div>
+                    <p-calendar [(ngModel)]="promoCodeToView.expiry" name="startDate" dateFormat="yy.mm.dd"
+                        [showTime]="true" [required]="true" inputId="startDate"></p-calendar>
+                </div>
+                <div *ngIf="startError == true" style="color:red;">
+                    Select a expiry date!
+                </div>
+            </div>
+            <div class="p-field" style="margin-top: 5px;">
+                <label for="value">Value</label>&nbsp;
+                <input class="input" type="number" min="0.00" max="10000.00" step="0.01" pInputText name="value"
+                    id="value" [(ngModel)]="promoCodeToView.value" required autofocus #value="ngModel" />
+                <div *ngIf="value.invalid && (value.dirty || value.touched || submitted)" class="errorText">
+                    <div class="p-error" *ngIf="value.errors != null && value.errors.required">
+                        Value is required.
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-field" style="margin-top: 5px;">
+                <label for="qty">Quantity</label>&nbsp;
+                <input class="input" type="number" min="0.00" max="10000.00" step="0.01" pInputText name="qty" id="qty"
+                    [(ngModel)]="promoCodeToView.qty" required autofocus #qty="ngModel" />
+                <div *ngIf="qty.invalid && (qty.dirty || qty.touched || submitted)" class="errorText">
+                    <div class="p-error" *ngIf="qty.errors != null && qty.errors.required">
+                        Quantity is required.
+                    </div>
+                </div>
+            </div>
+            <div class="p-field" style="margin-top: 5px;">
+                <label for="price">Price</label>&nbsp;
+                <input class="input" type="number" min="0.00" max="10000.00" step="0.01" pInputText name="price"
+                    id="price" [(ngModel)]="promoCodeToView.price" required autofocus #price="ngModel" />
+                <div *ngIf="price.invalid && (price.dirty || price.touched || submitted)" class="errorText">
+                    <div class="p-error" *ngIf="price.errors != null && price.errors.required">
+                        Price is required.
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+
+        <ng-template class="footer" pTemplate="footer">
+            <button class="cancel" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="closeDialog()"></button>
+            <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                (click)="updateCode()"></button>
+        </ng-template>
+
+    </p-dialog>
+</div>

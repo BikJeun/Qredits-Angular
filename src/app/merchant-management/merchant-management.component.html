@@ -1,1 +1,114 @@
-<p>merchant-management works!</p>
+<app-navbar></app-navbar>
+
+<section class="content">
+    <p-toast position="top-right"></p-toast>
+    <p-panel header="All Staffs">
+        <p-toolbar>
+            <!-- <ng-Template pTemplate="right"> -->
+            <button pButton pRipple label="Create New Staff" icon="pi pi-plus" class="p-button-success p-mr-2"
+                (click)="showCreateDialog()"></button>
+            <!-- </ng-Template> -->
+        </p-toolbar>
+        <p-table [value]="staffs">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Staff ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Creation Date</th>
+
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-staff>
+                <tr>
+                    <td>{{staff.staffId}}</td>
+                    <td>{{staff.firstname}}</td>
+                    <td>{{staff.lastName}}</td>
+                    <td>{{staff.email}}</td>
+                    <td>{{staff.acctCreationDate}}</td>
+                    <td>
+                        <p-splitButton label="Edit" icon="pi pi-plus" styleClass=" p-button-warning" [model]="items"
+                            (click)="passStaff(staff)">
+                        </p-splitButton>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-panel>
+
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+    <p-dialog class="dialogs" *ngIf="showUpdate" header="Update Staff Details" [(visible)]="showUpdate">
+        <ng-template pTemplate="content">
+            <div class="p-field">
+                <label for="firstname">First Name</label>
+                <input class="input" type="text" pInputText name="firstname" id="firstname"
+                    [(ngModel)]="staffToView.firstname" required autofocus />
+                <small class="p-error" *ngIf="submitted && !staffToView.firstname">First Name is required</small>
+            </div>
+            <div class="p-field">
+                <label for="lastName">Last Name</label>
+                <input class="input" type="text" pInputText name="lastName" id="lastName"
+                    [(ngModel)]="staffToView.lastName" required autofocus />
+                <small class="p-error" *ngIf="submitted && !staffToView.lastName">Last Name is required</small>
+            </div>
+
+
+        </ng-template>
+
+        <ng-template class="footer" pTemplate="footer">
+            <button class="cancel" pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                (click)="updateStaff()"></button>
+        </ng-template>
+
+    </p-dialog>
+
+    <p-dialog *ngIf="showCreate" header="Create New Staff" [(visible)]="showCreate">
+
+        <ng-template pTemplate="content">
+            <form class=createStaffForm>
+                <div class="p-field">
+                    <label for="firstname">First Name</label>
+                    <input type="text" name="firstname" id="firstname" pInputText [(ngModel)]="staff.firstname" required
+                        autofocus>
+                    <small class="p-error" *ngIf="submitted && !staff.firstname">First Name is required</small>
+                </div>
+
+                <div class="p-field">
+                    <label for="lastName">Last Name</label>
+                    <input class="input" type="text" pInputText name="lastName" id="lastName"
+                        [(ngModel)]="staff.lastName" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !staff.lastName">Last Name is required</small>
+                </div>
+
+                <div class="p-field">
+                    <label for="username">Email</label>
+                    <input class="input" type="text" pInputText name="username" id="username" [(ngModel)]=" staff.email"
+                        required autofocus />
+                    <small class="p-error" *ngIf="submitted && !staff.username">Username is required</small>
+                </div>
+
+                <div class="p-field">
+                    <label for="password">Password</label>
+                    <input class="input" type="password" pInputText name="password" id="password"
+                        [(ngModel)]=" staff.password" required autofocus />
+                    <small class="p-error" *ngIf="submitted && !staff.password">Password is required</small>
+                </div>
+
+            </form>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                (click)="createNewStaff()"></button>
+        </ng-template>
+
+    </p-dialog>
+
+</section>
